@@ -58,6 +58,7 @@ export default {
 
 <style scoped lang="scss">
 .flow{
+  margin-bottom: 50px;
   &-title{
     margin: 50px 0;
     text-align: center;
@@ -65,6 +66,13 @@ export default {
   }
   &-content{
     padding: 0;
+    &::after{
+      content: "";
+      display: block;
+      height: 0;
+      clear: both;
+      visibility: hidden;
+    }
     li{
       list-style: none;
       float: left;
@@ -72,7 +80,6 @@ export default {
         width: 225px;
         box-sizing: border-box;
         display: block;
-        // color: green;
         border-left: 4px solid #ccc;
         padding: 10px 0 0 20px;
         margin-left: 10px;

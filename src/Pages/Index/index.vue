@@ -4,14 +4,19 @@
     <div class="Index-content">
       <category></category>
       <flow></flow>
+      <img src="http://www.sunvary.com.cn/upload/2017/03/29/149079616210853a553.jpg" alt="">
+      <rule></rule>
     </div>
+    <index-footer></index-footer>
   </div>
 </template>
 
 <script>
-import IndexHeader from '@/components/header.vue'
+import IndexHeader from '@/components/header'
 import Category from './components/Category'
 import Flow from './components/Flow'
+import Rule from './components/Rule'
+import IndexFooter from '@//components/footer'
 export default {
   data () {
     return {
@@ -19,8 +24,10 @@ export default {
   },
   components: {
     IndexHeader,
+    IndexFooter,
     Category,
-    Flow
+    Flow,
+    Rule
   }
 }
 </script>
@@ -31,23 +38,8 @@ export default {
   &-content{
     width: 1200px;
     margin: 40px auto;
-    .list{
-      .item{
-        position: relative;
-        display: inline-block;
-        width: 300px;
-        height: 400px;
-        box-sizing: border-box;
-        p{
-          position: absolute;
-          top: 45%;
-          left: 50%;
-          color: #fff;
-          font-size: 28px;
-          font-weight: bold;
-          transform: translate(-45%,-50%);
-        }
-      }
+    img{
+      width: 1200px;
     }
   }
 }
