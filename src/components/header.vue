@@ -1,11 +1,21 @@
 <template>
   <div class="content">
     <ul class="content-right">
-      <li><i class="iconfont icon-user"></i>登录/注册</li>
+      <router-link v-show="!userName" tag="li" to="/LogReg"><i class="iconfont icon-user"></i>登录/注册</router-link>
+      <li v-show="userName">
+        <Dropdown>
+          <a href="javascript:void(0)" style="color:#696969">{{userName}}
+            <Icon type="md-arrow-dropdown" class="dropdown"/>
+          </a>
+          <DropdownMenu slot="list">
+            <DropdownItem @click.native="logout">退出登录</DropdownItem>
+          </DropdownMenu>
+        </Dropdown>
+      </li>
       <li><i class="iconfont icon-shoppingcarthover"></i>购物车</li>
     </ul>
     <div class="content-main">
-      <p>礼服租赁</p>
+      <router-link tag="p" to="/">礼服租赁</router-link>
       <ul class="tab">
         <li>婚纱</li>
         <li>晚礼服</li>
@@ -13,8 +23,7 @@
         <li>西服</li>
       </ul>
       <div class="search">
-        <input type="text" placeholder="搜索礼服"/>
-        <i class="iconfont icon--search1"></i>
+        <Input type="text" search placeholder="搜索礼服"/>
       </div>
     </div>
   </div>
@@ -24,7 +33,18 @@
 export default {
   data () {
     return {
-
+    }
+  },
+  computed: {
+    userName () {
+      return this.$store.state.rent_user
+    }
+  },
+  methods: {
+    logout () {
+      this.$store.commit('$_removeUser') // 清除登录信息
+      this.$Message.success('退出登陆成功')
+      // this.$router.push('/')
     }
   },
   components: {
@@ -49,6 +69,7 @@ export default {
     li{
       float: right;
       margin-right: 50px;
+      cursor: pointer;
       i{
         margin-right: 10px;
       }
@@ -64,6 +85,7 @@ export default {
       margin: 50px auto 20px;
       width: 150px;
       font-size: 36px;
+      cursor: pointer;
     }
     .tab{
       width: 800px;
@@ -81,15 +103,9 @@ export default {
       bottom: 0px;
       display: inline-block;
       border: 2px solid #ccc;
-      input{
-        height: 24px;
+      border-radius: 5px;
+      /deep/ Input{
         border-style: none;
-        // margin-right: 10px;
-        outline: none;
-      }
-      i{
-        font-size: 14px;
-        padding: 0 5px;
       }
     }
   }
