@@ -2,7 +2,7 @@
   <div class="Index">
     <index-header></index-header>
     <router-view/>
-    <!-- <index-content></index-content> -->
+    <index-content></index-content>
     <index-footer></index-footer>
   </div>
 </template>
