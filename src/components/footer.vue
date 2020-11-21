@@ -55,6 +55,10 @@ export default {
 
 <style scoped lang="scss">
 .footer{
+  // position: absolute;
+  // bottom: 0;
+  // left: 0;
+  // right: 0;
   background-color: #1c1c1c;
   color: #fff;
   &-rent{

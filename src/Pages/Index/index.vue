@@ -1,8 +1,7 @@
 <template>
   <div class="Index">
     <index-header></index-header>
-    <router-view/>
-    <index-content></index-content>
+    <router-view></router-view>
     <index-footer></index-footer>
   </div>
 </template>
