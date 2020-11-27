@@ -15,7 +15,8 @@
       <li><i class="iconfont icon-shoppingcarthover"></i>购物车</li>
     </ul>
     <div class="content-main">
-      <router-link tag="p" to="/">礼服租赁</router-link>
+      <!-- <router-link tag="p" to="/">礼服租赁</router-link> -->
+      <slot></slot>
       <ul class="tab">
         <li>婚纱</li>
         <li>晚礼服</li>

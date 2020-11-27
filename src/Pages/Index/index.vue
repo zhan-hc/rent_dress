@@ -1,6 +1,8 @@
 <template>
   <div class="Index">
-    <index-header></index-header>
+    <index-header>
+      <router-link tag="p" to="/">礼服租赁</router-link>
+    </index-header>
     <router-view></router-view>
     <index-footer></index-footer>
   </div>

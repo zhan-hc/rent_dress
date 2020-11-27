@@ -13,6 +13,7 @@ export default new Router({
       path: '/',
       name: 'Index',
       component: Index,
+      redirect: '/homepage',
       children: [
         {
           path: 'homepage',
