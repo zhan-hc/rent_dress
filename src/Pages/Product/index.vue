@@ -14,17 +14,27 @@
 export default {
   data () {
     return {
-      productList: []
+      productList: [],
+      searchName: null
     }
   },
   mounted () {
+    this.searchName = this.$route.params.name
     this.getProduct()
+  },
+  watch: {
+    '$route': function (to, from) { // 监听到路由（参数）改变
+      this.$router.go(0)
+    }
   },
   methods: {
     getProduct () {
       this.$axios({
         method: 'get',
-        url: '/api/product/info/infoList'
+        url: '/api/product/info/infoList',
+        params: {
+          name: this.searchName
+        }
       }).then((res) => {
         if (res.data.status === 200) {
           this.productList = res.data.data

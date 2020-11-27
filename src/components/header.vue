@@ -24,7 +24,7 @@
         <li>西服</li>
       </ul>
       <div class="search">
-        <Input type="text" search placeholder="搜索礼服"/>
+        <Input type="text" search placeholder="搜索礼服" v-model="name" @on-search="sendName"/>
       </div>
     </div>
   </div>
@@ -34,6 +34,7 @@
 export default {
   data () {
     return {
+      name: ''
     }
   },
   computed: {
@@ -46,6 +47,9 @@ export default {
       this.$store.commit('$_removeUser') // 清除登录信息
       this.$Message.success('退出登陆成功')
       // this.$router.push('/')
+    },
+    sendName () {
+      this.$router.push(`/Product/${this.name}`)
     }
   },
   components: {

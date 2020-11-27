@@ -21,7 +21,7 @@ export default new Router({
           component: () => import('@/Pages/Index/components/Content')
         },
         {
-          path: 'product',
+          path: 'product/:name?',
           name: 'product',
           component: () => import('@/Pages/Product')
         }
