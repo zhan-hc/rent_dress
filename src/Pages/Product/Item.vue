@@ -17,7 +17,7 @@
         </ul>
         <div class="info-color">
           颜色：
-          <RadioGroup type="button" v-if="ItemList" v-model="color" class="color">
+          <RadioGroup type="button" v-if="ItemList" v-model="color" class="color" @on-change="colorChange">
             <Radio :label="key" v-for="(item, key, i) in ItemList.product_color" :key="i" class="rad"></Radio>
           </RadioGroup>
         </div>
@@ -35,14 +35,13 @@
             <Icon type="ios-arrow-down" class="icon"  @click="operate(2)"/>
           </div>
         </div>
-        <div class="info-stock" v-if="ItemStock" @click="test">
+        <div class="info-stock" v-if="Info[this.color]">
           库存：
           {{ItemStock['stock']}}
           件
         </div>
         <button class="add-order">立即预约</button>
         <button class="add-car">
-          <!-- <Icon type="ios-cart" /> -->
           加入购物车
         </button>
       </div>
@@ -59,7 +58,7 @@ export default {
     return {
       pid: null,
       ItemList: {},
-      colorInfo: [],
+      Info: {},
       color: '',
       num: 1,
       size: ''
@@ -76,7 +75,7 @@ export default {
       }
     },
     ItemStock () {
-      return this.colorInfo.filter((item) => {
+      return this.Info[this.color].filter((item) => {
         return item.size === this.size
       })[0]
     }
@@ -93,8 +92,8 @@ export default {
         if (res.data.status === 200) {
           this.ItemList = res.data.data
           this.color = this.ItemColor
-          this.colorInfo = this.ItemList.product_color[this.color]
-          this.size = this.colorInfo[0].size
+          this.Info = this.ItemList.product_color
+          this.size = this.ItemList.product_color[this.color][0].size
         } else {
           this.$Message.error(res.data.msg)
         }
@@ -104,8 +103,8 @@ export default {
       if (type === 1) this.num += 1
       else this.num = this.num === 1 ? 1 : this.num - 1
     },
-    test () {
-      console.log(this.ItemStock)
+    colorChange () {
+      this.size = this.ItemList.product_color[this.color][0].size
     }
   },
   components: {
