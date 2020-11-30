@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import Index from '@/Pages/Index'
 import LogReg from '@/Pages/LogReg'
 import Item from '@/Pages/Product/Item'
+import Order from '@/Pages/Order'
 
 Vue.use(Router)
 
@@ -36,6 +37,11 @@ export default new Router({
       path: '/Product/Item/:pid',
       name: 'Item',
       component: Item
+    },
+    {
+      path: '/Order',
+      name: 'Order',
+      component: Order
     }
   ]
 })

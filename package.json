@@ -14,8 +14,10 @@
     "build": "node build/build.js"
   },
   "dependencies": {
+    "moment": "^2.29.1",
     "node-sass": "^4.13.1",
     "sass-loader": "^4.1.1",
+    "v-distpicker": "^1.2.9",
     "view-design": "^4.4.0",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1",

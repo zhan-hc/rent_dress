@@ -6,9 +6,15 @@ import store from './store'
 import router from './router'
 import axios from './utils/http'
 import ViewUI from 'view-design'
+import VDistpicker from 'v-distpicker'
+import moment from 'moment'
+
 import './assets/iconfont/iconfont.css'
 import 'view-design/dist/styles/iview.css'
+
+Vue.component('v-distpicker', VDistpicker)
 Vue.use(ViewUI)
+Vue.prototype.moment = moment
 Vue.prototype.$axios = axios
 Vue.config.productionTip = false
 

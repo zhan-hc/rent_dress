@@ -9,10 +9,10 @@
         <div class="info-title">{{ItemList.product_name}}</div>
         <div class="info-price">
           价格：
-          <span>￥{{ItemList.product_price}}</span>
+          <span>￥{{ItemList.product_price}}/天</span>
         </div>
         <ul class="info-appraise">
-          <li>月销量：<span>0</span></li>
+          <li>月销量：<span>{{ItemList.product_sales}}</span></li>
           <li>累计评价：<span>0</span></li>
         </ul>
         <div class="info-color">
@@ -22,7 +22,7 @@
           </RadioGroup>
         </div>
         <div class="info-size">
-          尺寸：
+          尺码：
           <RadioGroup type="button" v-if="color" v-model="size" class="size">
             <Radio :label="item.size" v-for="(item, i) in ItemList.product_color[color]" :key="i" class="rad"></Radio>
           </RadioGroup>
@@ -40,13 +40,61 @@
           {{ItemStock['stock']}}
           件
         </div>
-        <button class="add-order">立即预约</button>
+        <button class="add-order" @click="rentDress">立即租赁</button>
         <button class="add-car">
           加入购物车
         </button>
       </div>
     </div>
     <item-footer></item-footer>
+    <Modal v-model="modal1">
+      <div slot="header">预约订单</div>
+      <Form :label-width="80"  :model="formItem" ref="formValidate" :rules="ruleValidate">
+        <FormItem label="地址">
+          <v-distpicker
+          :province="select.province"
+          :city="select.city"
+          :area="select.area"
+          @province="onChangeProvince"
+          @city="onChangeCity"
+          @area="onSelectArea"
+          ></v-distpicker>
+        </FormItem>
+        <FormItem label="详细地址" prop="detail">
+          <Input v-model="formItem.detail" placeholder="请输入详细地址" clearable style="width: 350px" />
+        </FormItem>
+        <FormItem label="收件人" prop="addressee">
+          <Input v-model="formItem.addressee" placeholder="请输入收件人昵称" clearable style="width: 200px" />
+        </FormItem>
+        <FormItem label="手机号" prop="mobile">
+          <Input v-model="formItem.mobile" placeholder="请输入收件人电话" clearable style="width: 200px" />
+        </FormItem>
+        <FormItem label="租期" prop="dateTime">
+          <DatePicker type="daterange" v-model="formItem.dateTime" placeholder="Select date" style="width: 200px" @on-change="handlechange"></DatePicker>
+        </FormItem>
+      </Form>
+      <div style="background:#f5f5f5;padding:10px; display:flex;margin:10px 0;">
+        <div style="width: 100px;height: 100px;">
+          <img :src="ItemList.product_img" alt="" style="width: 100%;height: 100%;">
+        </div>
+        <div class="content" style="flex:1;margin-left:20px">
+          <div class="title">{{ItemList.product_name}}</div>
+          <div class="color">颜色：{{color}}</div>
+          <div class="size">尺码：{{size}}</div>
+          <div class=num>数量：{{num}}</div>
+        </div>
+      </div>
+      <p>日租金：￥{{ItemList.product_price}}</p>
+      <p>租期：{{time}}天</p>
+      <p style="color:red;font-size:18px;border-bottom:1px solid #ccc;padding:0 0 10px;">总租金：￥{{ItemList.product_price*time}}</p>
+      <p style="margin:10px 0;">总费用(押金+租金)：￥{{total}}</p>
+      <Input v-model="formItem.note" type="textarea" placeholder="备注" />
+      <Radio v-model="radio" style="margin:20px 0 0;">我已阅读并同意<span style="color:red">《礼服租赁协议》</span></Radio>
+      <div slot="footer">
+        <Button type="primary" @click="validate">确认</Button>
+        <Button type="text" @click="closeModal">取消</Button>
+      </div>
+    </Modal>
   </div>
 </template>
 
@@ -61,7 +109,40 @@ export default {
       Info: {},
       color: '',
       num: 1,
-      size: ''
+      size: '',
+      time: null,
+      modal1: false,
+      radio: false,
+      select: { province: '', city: '', area: '' },
+      formItem: {
+        addressee: '',
+        mobile: '',
+        detail: '',
+        dateTime: [],
+        note: ''
+      },
+      ruleValidate: {
+        detail: [
+          { required: true, message: '详细地址不能为空', trigger: 'blur' }
+        ],
+        addressee: [
+          { required: true, message: '收件人姓名不能为空', trigger: 'blur' }
+        ],
+        mobile: [
+          { required: true, validator: this.validatePhone, trigger: 'blur' }
+        ],
+        dateTime: [
+          {
+            type: 'array',
+            required: true,
+            fields:
+              {
+                0: {type: 'date', required: true, message: '请输入有效期', trigger: 'blur'},
+                1: {type: 'date', required: true, message: '请输入有效期', trigger: 'blur'}
+              }
+          }
+        ]
+      }
     }
   },
   mounted () {
@@ -69,18 +150,82 @@ export default {
     this.getItemList()
   },
   computed: {
-    ItemColor () {
+    ItemColor () { // 第一个颜色
       for (let key in this.ItemList['product_color']) {
         return key
       }
     },
-    ItemStock () {
+    ItemStock () { // 当前尺寸对象(id,size,stock)
       return this.Info[this.color].filter((item) => {
         return item.size === this.size
       })[0]
+    },
+    area () { // 租金
+      return this.select.province + this.select.city + this.select.area + this.formItem.detail
+    },
+    total () { // 总金额
+      return this.ItemList.product_price * this.time + this.ItemList.product_deposit
+    },
+    userId () {
+      return this.$store.state.rent_userId
     }
   },
   methods: {
+    // 手机号校验
+    validatePhone (rule, value, callback) {
+      if (!value) {
+        return callback(new Error('手机号不能为空'))
+      } else if (!/^1[34578]\d{9}$/.test(value)) {
+        callback(new Error('手机号格式不正确'))
+      } else {
+        callback()
+      }
+    },
+    validate () { // 校验
+      this.$refs['formValidate'].validate((valid) => {
+        if (valid) {
+          if (this.select.province === '' || this.select.city === '' || this.select.area === '') {
+            this.$Message.error('省市区不能为空')
+            return
+          }
+          if (this.radio === false) {
+            this.$Message.error('请勾选同意礼服租赁协议')
+            return false
+          }
+          this.addOrder()
+        }
+      })
+    },
+    addOrder () {
+      var formData = {
+        pid: this.pid,
+        sid: this.ItemStock['id'],
+        uid: this.userId,
+        address: this.area,
+        startTime: this.moment(this.formItem.dateTime[0]).format('YYYY-MM-DD'),
+        endTime: this.moment(this.formItem.dateTime[1]).format('YYYY-MM-DD'),
+        createTime: this.moment().format('YYYY-MM-DD HH:mm:ss'),
+        note: this.formItem.note,
+        addressee: this.formItem.addressee,
+        mobile: this.formItem.mobile,
+        product_sales: this.ItemList.product_sales + this.num
+      }
+      console.log(formData)
+      this.$axios({
+        method: 'POST',
+        url: '/api/order/addOrder',
+        data: formData
+      }).then((res) => {
+        console.log(res)
+        if (res.data.status === 200) {
+          this.$Message.success(res.data.msg)
+          this.closeModal()
+          this.getItemList()
+        } else {
+          this.$Message.error(res.data.msg.rawMessage)
+        }
+      })
+    },
     getItemList () {
       this.$axios({
         method: 'get',
@@ -99,12 +244,38 @@ export default {
         }
       })
     },
+    rentDress () {
+      if (this.$store.state.rent_userId === '') {
+        // this.$Message.error( '请先登录账号')
+        alert('请先登录账号')
+        this.$router.push('/LogReg')
+      } else {
+        this.modal1 = true
+      }
+    },
     operate (type) {
       if (type === 1) this.num += 1
       else this.num = this.num === 1 ? 1 : this.num - 1
     },
     colorChange () {
       this.size = this.ItemList.product_color[this.color][0].size
+    },
+    closeModal () {
+      this.modal1 = false
+      // this.color = ''
+      this.$refs['formValidate'].resetFields()
+    },
+    handlechange (data) {
+      this.time = this.moment(data[1]).diff(this.moment(data[0]), 'days') + 1
+    },
+    onChangeProvince (data) {
+      this.select.province = data.value
+    },
+    onChangeCity (data) {
+      this.select.city = data.value
+    },
+    onSelectArea (data) {
+      this.select.area = data.value
     }
   },
   components: {
@@ -216,6 +387,10 @@ export default {
         background-color: #ffeded;
         border: 1px solid #FF0036;
         color: #FF0036;
+        cursor: pointer;
+        &:focus{
+          outline: 0;
+        }
       }
       .add-car{
         background: #ff0036;
@@ -225,8 +400,13 @@ export default {
         height: 38px;
         color: #fff;
         font-weight: bold;
+        cursor: pointer;
+        &:focus{
+          outline: 0;
+        }
       }
     }
   }
+
 }
 </style>

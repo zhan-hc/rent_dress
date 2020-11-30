@@ -4,7 +4,7 @@
       <div class="item" v-for="item in productList" :key="item.pid" @click.stop="getItem(item.pid)">
         <div class="item-img"><img class="item-img" :src="item.product_img" alt=""></div>
         <p class="item-title">{{item.product_name}}</p>
-        <p class="item-price">￥{{item.product_price}}</p>
+        <p class="item-price">￥{{item.product_price}}/天</p>
       </div>
     </div>
   </div>

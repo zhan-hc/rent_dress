@@ -152,6 +152,7 @@ export default {
         }).then((res) => {
           if (res.data.status === 200) {
             this.$store.commit('$_setUser', res.data.data[0].username)
+            this.$store.commit('$_setUserId', res.data.data[0].uid)
             this.$router.push('/homepage')
           } else {
             this.$Message.error(res.data.msg)
