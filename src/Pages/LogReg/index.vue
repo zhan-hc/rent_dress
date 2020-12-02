@@ -129,7 +129,6 @@ export default {
             url: '/api/user/addUser',
             data: this.RegItem
           }).then((res) => {
-            console.log(res)
             if (res.data.status === 200) {
               this.$Message.success(res.data.msg)
               this.type = 1
@@ -160,20 +159,6 @@ export default {
         })
       } else {
         this.addUser()
-        // this.$axios({
-        //   method: 'POST',
-        //   url: '/api/sms/sendMessage',
-        //   data: {
-        //     'mobile': this.RegItem.mobile
-        //   }
-        // }).then((res) => {
-        //   console.log(res)
-        //   if (res.data.status === 200) {
-        //     console.log(res.data.msg)
-        //   } else {
-        //     this.$Message.error(res.data.msg.rawMessage)
-        //   }
-        // })
       }
     },
     chooseRegister () {

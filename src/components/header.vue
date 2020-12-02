@@ -49,7 +49,7 @@ export default {
       this.$store.commit('$_removeUser') // 清除登录信息
       this.$store.commit('$_removeUserId')
       this.$Message.success('退出登陆成功')
-      // this.$router.push('/')
+      this.$router.push('/')
     },
     hrefOrder () {
       this.$router.push('/Order')

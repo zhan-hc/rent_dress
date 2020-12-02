@@ -13,7 +13,7 @@
         </div>
         <ul class="info-appraise">
           <li>月销量：<span>{{ItemList.product_sales}}</span></li>
-          <li>累计评价：<span>0</span></li>
+          <li>累计评价：<span>{{AppraisesList.length}}</span></li>
         </ul>
         <div class="info-color">
           颜色：
@@ -46,6 +46,7 @@
         </button>
       </div>
     </div>
+    <appraises v-if="type" :list="AppraisesList" :total="Listtotal" @getPage="changePage" @getRadio="changeRadio"></appraises>
     <item-footer></item-footer>
     <Modal v-model="modal1">
       <div slot="header">预约订单</div>
@@ -101,7 +102,13 @@
 <script>
 import ItemHeader from '@/components/header'
 import ItemFooter from '@/components/footer'
+import Appraises from '@/Pages/Appraises'
 export default {
+  components: {
+    ItemHeader,
+    ItemFooter,
+    Appraises
+  },
   data () {
     return {
       pid: null,
@@ -111,8 +118,14 @@ export default {
       num: 1,
       size: '',
       time: null,
+      Listtotal: 0,
       modal1: false,
       radio: false,
+      AppraisesList: [],
+      type: false,
+      pageNo: 1,
+      imgStatus: null,
+      pageSize: 10,
       select: { province: '', city: '', area: '' },
       formItem: {
         addressee: '',
@@ -148,6 +161,7 @@ export default {
   mounted () {
     this.pid = this.$route.params.pid
     this.getItemList()
+    this.getAppraisesList()
   },
   computed: {
     ItemColor () { // 第一个颜色
@@ -210,13 +224,11 @@ export default {
         mobile: this.formItem.mobile,
         product_sales: this.ItemList.product_sales + this.num
       }
-      console.log(formData)
       this.$axios({
         method: 'POST',
         url: '/api/order/addOrder',
         data: formData
       }).then((res) => {
-        console.log(res)
         if (res.data.status === 200) {
           this.$Message.success(res.data.msg)
           this.closeModal()
@@ -225,6 +237,33 @@ export default {
           this.$Message.error(res.data.msg.rawMessage)
         }
       })
+    },
+    getAppraisesList () {
+      this.$axios({
+        method: 'get',
+        url: '/api/appraises/getPidAppraises',
+        params: {
+          pageNo: this.pageNo,
+          pageSize: this.pageSize,
+          pid: this.pid,
+          img: this.imgStatus
+        }
+      }).then((res) => {
+        if (res.data.status === 200) {
+          this.AppraisesList = res.data.data
+          this.Listtotal = res.data.total
+          this.type = true
+        }
+      })
+    },
+    changePage (current) {
+      this.pageNo = current
+      this.getAppraisesList()
+    },
+    changeRadio (val) {
+      if (val === 0) this.imgStatus = null
+      else this.imgStatus = val
+      this.getAppraisesList()
     },
     getItemList () {
       this.$axios({
@@ -277,16 +316,13 @@ export default {
     onSelectArea (data) {
       this.select.area = data.value
     }
-  },
-  components: {
-    ItemHeader,
-    ItemFooter
   }
 }
 </script>
 
 <style scoped lang="scss">
 .Item{
+  min-width: 1400px;
   &-content{
     margin: 50px auto;
     width: 1000px;
