@@ -20,10 +20,7 @@
       <!-- <router-link tag="p" to="/">礼服租赁</router-link> -->
       <slot></slot>
       <ul class="tab">
-        <li>婚纱</li>
-        <li>晚礼服</li>
-        <li>衬衫</li>
-        <li>西服</li>
+        <li v-for="item in category" :key="item.id" @click="sendCategory(item.id)">{{item.product_category}}</li>
       </ul>
       <div class="search">
         <Input type="text" search placeholder="搜索礼服" v-model="name" @on-search="sendName"/>
@@ -36,15 +33,37 @@
 export default {
   data () {
     return {
-      name: ''
+      name: '',
+      category: []
+    }
+  },
+  mounted () {
+    if (this.getCategory) {
+      this.category = this.getCategory
+    } else {
+      this.getCategoryList()
     }
   },
   computed: {
     userName () {
       return this.$store.state.rent_user
+    },
+    getCategory () {
+      return this.$store.state.category
     }
   },
   methods: {
+    getCategoryList () {
+      this.$axios({
+        method: 'get',
+        url: `/api/product/category/categoryList`
+      }).then((res) => {
+        if (res.data.status === 200) {
+          this.$store.commit('$_setCategory', res.data.data)
+          this.category = res.data.data
+        }
+      })
+    },
     logout () {
       this.$store.commit('$_removeUser') // 清除登录信息
       this.$store.commit('$_removeUserId')
@@ -55,7 +74,21 @@ export default {
       this.$router.push('/Order')
     },
     sendName () {
-      this.$router.push(`/Product/${this.name}`)
+      this.$router.push({
+        pname: 'product',
+        query: {
+          name: this.name
+        }
+      })
+    },
+    sendCategory (id) {
+      this.$router.push({
+        name: 'product',
+        query: {
+          cid: id,
+          name: this.name
+        }
+      })
     }
   },
   components: {
@@ -106,6 +139,7 @@ export default {
       list-style: none;
       li{
         flex: 1;
+        cursor: pointer;
       }
     }
     .search{

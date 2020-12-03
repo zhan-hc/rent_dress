@@ -7,6 +7,7 @@
         <p class="item-price">￥{{item.product_price}}/天</p>
       </div>
     </div>
+    <Page :total="total" @on-change="changePage" class="page"/>
   </div>
 </template>
 
@@ -15,11 +16,16 @@ export default {
   data () {
     return {
       productList: [],
-      searchName: null
+      searchName: null,
+      total: 0,
+      pageNo: 1,
+      pageSize: 10,
+      cid: null // category_id
     }
   },
   mounted () {
-    this.searchName = this.$route.params.name
+    this.searchName = this.$route.query.name
+    this.cid = this.$route.query.cid
     this.getProduct()
   },
   watch: {
@@ -33,16 +39,25 @@ export default {
         method: 'get',
         url: '/api/product/info/infoList',
         params: {
-          name: this.searchName
+          pageNo: this.pageNo,
+          pageSize: this.pageSize,
+          name: this.searchName || null,
+          cid: this.cid || null
         }
       }).then((res) => {
+        console.log(res)
         if (res.data.status === 200) {
           this.productList = res.data.data
+          this.total = res.data.total
         }
       })
     },
     getItem (id) {
       this.$router.push(`/Product/item/${id}`) // 待调整
+    },
+    changePage (currentPage) {
+      this.pageNo = currentPage
+      this.getProduct()
     }
   },
   components: {
@@ -55,10 +70,7 @@ export default {
   width: 1200px;
   margin: 50px auto;
   &-list{
-    // display: flex;
-    // flex-wrap: wrap;
-    // justify-content: space-between;
-    // align-content: space-between;
+    min-height: 142px;
     .item{
       float: left;
       width: 240px;
@@ -102,6 +114,10 @@ export default {
     // &:nth-of-type(4n+0){
     //   margin-top: 20px;
     // }
+  }
+  .page{
+    text-align: right;
+    margin: 20px 20px 0 0;
   }
 }
 </style>

@@ -123,8 +123,8 @@ export default {
       radio: false,
       AppraisesList: [],
       type: false,
-      pageNo: 1,
       imgStatus: null,
+      pageNo: 1,
       pageSize: 10,
       select: { province: '', city: '', area: '' },
       formItem: {

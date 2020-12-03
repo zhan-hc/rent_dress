@@ -14,5 +14,8 @@ export default {
   $_removeUserId (state, value) {
     localStorage.removeItem('rent_userId')
     state.rent_userId = ''
+  },
+  $_setCategory (state, value) {
+    state.category = value
   }
 }

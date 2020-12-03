@@ -6,7 +6,11 @@ import Item from '@/Pages/Product/Item'
 import Order from '@/Pages/Order'
 
 Vue.use(Router)
-
+// 防止路由重复报错
+const originalPush = Router.prototype.push
+Router.prototype.push = function push (location) {
+  return originalPush.call(this, location).catch(err => err)
+}
 export default new Router({
   mode: 'history',
   routes: [
@@ -22,7 +26,7 @@ export default new Router({
           component: () => import('@/Pages/Index/components/Content')
         },
         {
-          path: 'product/:name?',
+          path: 'product',
           name: 'product',
           component: () => import('@/Pages/Product')
         }

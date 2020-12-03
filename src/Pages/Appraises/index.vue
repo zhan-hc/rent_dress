@@ -98,9 +98,9 @@ export default {
   }
   &-list{
     padding: 10px;
-    border-bottom: 2px solid #ccc;
     table{
       width: 100%;
+      border-collapse: collapse;
     }
     .item{
       border-bottom: 2px solid #ccc;
