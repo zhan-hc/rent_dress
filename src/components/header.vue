@@ -75,7 +75,7 @@ export default {
     },
     sendName () {
       this.$router.push({
-        pname: 'product',
+        name: 'product',
         query: {
           name: this.name
         }
