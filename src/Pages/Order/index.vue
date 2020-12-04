@@ -27,7 +27,7 @@
           </div>
         </div>
         <div class="item-footer">
-          <div class="item-total">总金额: ￥{{rent_time(item.startTime,item.endTime)*item.product_price + item.product_deposit}}</div>
+          <div class="item-total">总金额: ￥{{item.amount}}</div>
           <button class="item-btn" v-if="checkStatus(item.status)" @click="changeStatus(item.oid,item.status,item.oid,item.pid)">{{checkStatus(item.status)}}</button>
           <p class="item-finish"  v-if="!checkStatus(item.status)">订单已完成</p>
         </div>

@@ -222,7 +222,8 @@ export default {
         note: this.formItem.note,
         addressee: this.formItem.addressee,
         mobile: this.formItem.mobile,
-        product_sales: this.ItemList.product_sales + this.num
+        product_sales: this.ItemList.product_sales + this.num,
+        amount: this.total
       }
       this.$axios({
         method: 'POST',
