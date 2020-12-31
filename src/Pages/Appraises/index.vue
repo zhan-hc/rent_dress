@@ -1,6 +1,6 @@
 <template>
   <div class="Appraises">
-    <h2>累计评价({{1}})</h2>
+    <h2>累计评价({{total}})</h2>
     <div class="Appraises-header">
       <div class="header-rate">
         <h3>与描述相符</h3>

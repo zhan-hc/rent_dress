@@ -105,7 +105,7 @@ export default {
     validatePhone (rule, value, callback) {
       this.$axios({
         method: 'get',
-        url: '/api/user/userList',
+        url: '/user/userList',
         params: {
           mobile: this.RegItem.mobile
         }
@@ -126,7 +126,7 @@ export default {
         if (valid) {
           this.$axios({
             method: 'POST',
-            url: '/api/user/addUser',
+            url: '/user/addUser',
             data: this.RegItem
           }).then((res) => {
             if (res.data.status === 200) {
@@ -143,7 +143,7 @@ export default {
       if (this.type === 1) {
         this.$axios({
           method: 'POST',
-          url: '/api/user/checkUser',
+          url: '/user/checkUser',
           data: {
             'mobile': this.LoginItem.mobile,
             'password': this.LoginItem.password

@@ -215,6 +215,7 @@ export default {
         pid: this.pid,
         sid: this.ItemStock['id'],
         uid: this.userId,
+        pname: this.ItemList.product_name,
         address: this.area,
         startTime: this.moment(this.formItem.dateTime[0]).format('YYYY-MM-DD'),
         endTime: this.moment(this.formItem.dateTime[1]).format('YYYY-MM-DD'),
@@ -227,13 +228,16 @@ export default {
       }
       this.$axios({
         method: 'POST',
-        url: '/api/order/addOrder',
+        url: '/order/addOrder',
         data: formData
       }).then((res) => {
+        console.log(res)
         if (res.data.status === 200) {
-          this.$Message.success(res.data.msg)
-          this.closeModal()
-          this.getItemList()
+          window.location.href = res.data.url
+          // window.location.href = res.data.url
+          // this.$Message.success(res.data.msg)
+          // this.closeModal()
+          // this.getItemList()
         } else {
           this.$Message.error(res.data.msg.rawMessage)
         }
@@ -242,7 +246,7 @@ export default {
     getAppraisesList () {
       this.$axios({
         method: 'get',
-        url: '/api/appraises/getPidAppraises',
+        url: '/appraises/getPidAppraises',
         params: {
           pageNo: this.pageNo,
           pageSize: this.pageSize,
@@ -269,7 +273,7 @@ export default {
     getItemList () {
       this.$axios({
         method: 'get',
-        url: '/api/product/info/getPidInfo',
+        url: '/product/info/getPidInfo',
         params: {
           pid: this.pid
         }

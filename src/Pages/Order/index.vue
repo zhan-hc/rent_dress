@@ -3,6 +3,11 @@
     <item-header>
       <p>我的订单</p>
     </item-header>
+    <ul class="Order-category">
+      <li v-for="(item,i) in categoryList" :key="i" @click="changeOrderCategory(item.status)">
+        <span :class="{'active': item.status == orderStatus}">{{item.title}}</span>
+      </li>
+    </ul>
     <div class="Order-list" v-if="OrderList">
       <div class="item" v-for="item in OrderList" :key="item.id">
         <div class="item-header">
@@ -28,11 +33,12 @@
         </div>
         <div class="item-footer">
           <div class="item-total">总金额: ￥{{item.amount}}</div>
-          <button class="item-btn" v-if="checkStatus(item.status)" @click="changeStatus(item.oid,item.status,item.oid,item.pid)">{{checkStatus(item.status)}}</button>
-          <p class="item-finish"  v-if="!checkStatus(item.status)">订单已完成</p>
+          <button class="item-btn" v-if="item.status !== 4" @click="changeStatus(item.oid,item.status,item.oid,item.pid)">{{checkStatus(item.status)}}</button>
+          <p class="item-finish"  v-if="item.status === 4">{{checkStatus(item.status)}}</p>
         </div>
       </div>
     </div>
+    <div v-else class="Order-none">您还没有相关的订单</div>
     <item-footer></item-footer>
     <Modal v-model="modal1" :transfer="false">
       <div slot="header">评价订单</div>
@@ -61,7 +67,7 @@
           :before-upload="handleBeforeUpload"
           multiple
           type="drag"
-          action="/api/upload/img"
+          action="http://121.196.151.65:8080/upload/img"
           style="display: inline-block;width:58px;">
           <div style="width: 58px;height:58px;line-height: 58px;">
               <Icon type="ios-camera" size="20"></Icon>
@@ -94,10 +100,37 @@ export default {
       uploadList: [],
       score: 5,
       pid: 0,
+      orderStatus: null,
       oid: 0,
       formItem: {
         text: ''
-      }
+      },
+      categoryList: [
+        {
+          title: '全部',
+          status: null
+        },
+        {
+          title: '待付款',
+          status: 0
+        },
+        {
+          title: '待发货',
+          status: 1
+        },
+        {
+          title: '待收货',
+          status: 2
+        },
+        {
+          title: '待评价',
+          status: 3
+        },
+        {
+          title: '已完成',
+          status: 4
+        }
+      ]
     }
   },
   mounted () {
@@ -112,10 +145,16 @@ export default {
     getOrderList () {
       this.$axios({
         method: 'get',
-        url: `/api/order/getIdOrder/${this.userId}`
+        url: `/order/getIdOrder`,
+        params: {
+          uid: this.userId,
+          status: this.orderStatus
+        }
       }).then((res) => {
         if (res.data.status === 200) {
           this.OrderList = res.data.data
+        } else {
+          this.OrderList = null
         }
       })
     },
@@ -130,7 +169,7 @@ export default {
       }
       this.$axios({
         method: 'POST',
-        url: '/api/appraises/addAppraises',
+        url: '/appraises/addAppraises',
         data: formData
       }).then((res) => {
         if (res.data.status === 200) {
@@ -142,6 +181,10 @@ export default {
         }
       })
     },
+    changeOrderCategory (status) {
+      this.orderStatus = status
+      this.getOrderList()
+    },
     rent_time (t1, t2) {
       return this.moment(t2).diff(this.moment(t1), 'days') + 1
     },
@@ -152,22 +195,24 @@ export default {
       return this.moment(val).format('YYYY-MM-DD HH:mm:ss')
     },
     checkStatus (status) {
-      if (status === 0) return '确认收货'
-      else if (status === 1) return '立即评价'
-      else return ''
+      if (status === 0) return '等待买家付款'
+      else if (status === 1) return '提醒发货'
+      else if (status === 2) return '确认收货'
+      else if (status === 3) return '立即评价'
+      else return '订单已完成'
     },
     changeStatus (id, status, oid, pid) {
-      if (status === 0) {
+      if (status === 2) { // 确认收货
         this.$Modal.confirm({
           title: '确认收货提示',
           content: '是否确认收货？',
           onOk: () => {
             this.$axios({
               method: 'post',
-              url: '/api/order/updateOrderStatus',
+              url: '/order/updateOrderStatus',
               data: {
                 oid: id,
-                status: 1
+                status: 3
               }
             }).then((res) => {
               if (res.data.status === 200) {
@@ -179,7 +224,7 @@ export default {
             })
           }
         })
-      } else {
+      } else if (status === 3) { // 评价
         this.modal1 = true
         this.oid = oid
         this.pid = pid
@@ -190,7 +235,7 @@ export default {
       this.$refs.upload.fileList.splice(fileList.indexOf(file), 1)
     },
     handleSuccess (res, file, fileList) {
-      file.url = `/api/static${res.data}`
+      file.url = `http://121.196.151.65:8080/static${res.data}`
       this.uploadList = fileList
     },
     handleFormatError (file) {
@@ -232,6 +277,26 @@ export default {
 <style scoped lang="scss">
 .Order{
   min-width: 1400px;
+  &-category{
+    width: 800px;
+    margin: 50px auto 0;
+    display: flex;
+    list-style: none;
+    li{
+      flex: 1;
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      span{
+        padding: 7px 20px;
+        &.active{
+          border-bottom: 3px solid red;
+        }
+      }
+
+    }
+  }
   &-list{
     min-height: 192px;
     width: 800px;
@@ -314,6 +379,13 @@ export default {
         }
       }
     }
+  }
+  &-none{
+    width: 800px;
+    margin: 50px auto 0;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
   }
   .demo-upload-list{
     display: inline-block;

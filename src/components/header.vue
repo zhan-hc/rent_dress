@@ -56,7 +56,7 @@ export default {
     getCategoryList () {
       this.$axios({
         method: 'get',
-        url: `/api/product/category/categoryList`
+        url: `/product/category/categoryList`
       }).then((res) => {
         if (res.data.status === 200) {
           this.$store.commit('$_setCategory', res.data.data)

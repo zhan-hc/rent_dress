@@ -37,7 +37,7 @@ export default {
     getProduct () {
       this.$axios({
         method: 'get',
-        url: '/api/product/info/infoList',
+        url: '/product/info/infoList',
         params: {
           pageNo: this.pageNo,
           pageSize: this.pageSize,

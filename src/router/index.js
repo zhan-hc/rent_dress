@@ -4,6 +4,7 @@ import Index from '@/Pages/Index'
 import LogReg from '@/Pages/LogReg'
 import Item from '@/Pages/Product/Item'
 import Order from '@/Pages/Order'
+import Result from '@/Pages/Order/Result'
 
 Vue.use(Router)
 // 防止路由重复报错
@@ -46,6 +47,11 @@ export default new Router({
       path: '/Order',
       name: 'Order',
       component: Order
+    },
+    {
+      path: '/result',
+      name: 'result',
+      component: Result
     }
   ]
 })

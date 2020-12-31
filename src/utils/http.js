@@ -3,6 +3,15 @@ import axios from 'axios'
 // import store from '@/store'
 import qs from 'qs'
 
+// 在开发环境中的测试 development
+if (process.env.NODE_ENV === 'development') {
+  axios.defaults.baseURL = 'http://localhost:8080'
+}
+// 在生产环境中的测试 production
+if (process.env.NODE_ENV === 'production') {
+  axios.defaults.baseURL = 'http://121.196.151.65:8080'
+}
+
 // 添加请求拦截器
 axios.interceptors.request.use(
   config => {
