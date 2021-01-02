@@ -33,8 +33,9 @@
         </div>
         <div class="item-footer">
           <div class="item-total">总金额: ￥{{item.amount}}</div>
-          <button class="item-btn" v-if="item.status !== 4" @click="changeStatus(item.oid,item.status,item.oid,item.pid)">{{checkStatus(item.status)}}</button>
+          <button class="item-btn" v-if="item.status !== 4" @click="changeStatus(item.oid,item.status,item.pid)">{{checkStatus(item.status)}}</button>
           <p class="item-finish"  v-if="item.status === 4">{{checkStatus(item.status)}}</p>
+          <p class="item-parcel" v-if="item.status === 2"><a :href='`https://www.kuaidi100.com/chaxun?com=${item.kcode}&nu=${item.shipperCode}`'>查看物流</a></p>
         </div>
       </div>
     </div>
@@ -201,8 +202,10 @@ export default {
       else if (status === 3) return '立即评价'
       else return '订单已完成'
     },
-    changeStatus (id, status, oid, pid) {
-      if (status === 2) { // 确认收货
+    changeStatus (oid, status, pid) {
+      if (status === 1) {
+        this.$Message.success('已经提醒商家发货')
+      } else if (status === 2) { // 确认收货
         this.$Modal.confirm({
           title: '确认收货提示',
           content: '是否确认收货？',
@@ -211,7 +214,7 @@ export default {
               method: 'post',
               url: '/order/updateOrderStatus',
               data: {
-                oid: id,
+                oid: oid,
                 status: 3
               }
             }).then((res) => {
@@ -376,6 +379,19 @@ export default {
           margin-right: 20px;
           padding: 5px 0 0;
           font-weight: bold;
+        }
+        .item-parcel{
+          width: 150px;
+          text-align: center;
+          border-radius: 20px;
+          margin-right: 20px;
+          cursor: pointer;
+          padding: 5px 0;
+          font-weight: bold;
+          border: 2px solid#708090;
+          a{
+            color:#778899;
+          }
         }
       }
     }
