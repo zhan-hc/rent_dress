@@ -231,13 +231,8 @@ export default {
         url: '/order/addOrder',
         data: formData
       }).then((res) => {
-        console.log(res)
         if (res.data.status === 200) {
           window.location.href = res.data.url
-          // window.location.href = res.data.url
-          // this.$Message.success(res.data.msg)
-          // this.closeModal()
-          // this.getItemList()
         } else {
           this.$Message.error(res.data.msg.rawMessage)
         }
@@ -306,7 +301,6 @@ export default {
     },
     closeModal () {
       this.modal1 = false
-      // this.color = ''
       this.$refs['formValidate'].resetFields()
     },
     handlechange (data) {

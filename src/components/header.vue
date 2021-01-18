@@ -8,13 +8,13 @@
             <Icon type="md-arrow-dropdown" class="dropdown"/>
           </a>
           <DropdownMenu slot="list">
-            <DropdownItem>个人中心</DropdownItem>
+            <DropdownItem @click.native="hrefPerson">个人中心</DropdownItem>
              <DropdownItem @click.native="hrefOrder">我的订单</DropdownItem>
             <DropdownItem @click.native="logout">退出登录</DropdownItem>
           </DropdownMenu>
         </Dropdown>
       </li>
-      <li><i class="iconfont icon-shoppingcarthover"></i>购物车</li>
+      <router-link tag="li" to="/homepage"><Icon type="md-home" />主页</router-link>
     </ul>
     <div class="content-main">
       <!-- <router-link tag="p" to="/">礼服租赁</router-link> -->
@@ -72,6 +72,9 @@ export default {
     },
     hrefOrder () {
       this.$router.push('/Order')
+    },
+    hrefPerson () {
+      this.$router.push('/Person')
     },
     sendName () {
       this.$router.push({

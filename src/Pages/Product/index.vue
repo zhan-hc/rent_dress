@@ -45,7 +45,6 @@ export default {
           cid: this.cid || null
         }
       }).then((res) => {
-        console.log(res)
         if (res.data.status === 200) {
           this.productList = res.data.data
           this.total = res.data.total
