@@ -31,6 +31,7 @@
             <span v-show="item.note">备注：{{item.note}}</span>
           </div>
         </div>
+        <div v-if="item.deposit_status" class="item-deposit-desc">押金描述：{{item.deposit_describe}}</div>
         <div class="item-footer">
           <div class="item-total">总金额: ￥{{item.amount}}</div>
           <button class="item-btn" v-if="item.status !== 4" @click="changeStatus(item.oid,item.status,item.pid)">{{checkStatus(item.status)}}</button>
@@ -348,6 +349,10 @@ export default {
           }
         }
       }
+      &-deposit-desc{
+          border-top: 1px solid #ccc;
+          padding: 5px 0 5px 10px;
+        }
       &-footer{
         display: flex;
         border-top: 1px solid #ccc;

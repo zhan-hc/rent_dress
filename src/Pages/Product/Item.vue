@@ -40,10 +40,7 @@
           {{ItemStock['stock']}}
           件
         </div>
-        <button class="add-order" @click="rentDress">立即租赁</button>
-        <button class="add-car">
-          加入购物车
-        </button>
+        <button class="add-car"  @click="rentDress">立即租赁</button>
       </div>
     </div>
     <appraises v-if="type" :list="AppraisesList" :total="Listtotal" @getPage="changePage" @getRadio="changeRadio"></appraises>
@@ -90,11 +87,16 @@
       <p style="color:red;font-size:18px;border-bottom:1px solid #ccc;padding:0 0 10px;">总租金：￥{{ItemList.product_price*time}}</p>
       <p style="margin:10px 0;">总费用(押金+租金)：￥{{total}}</p>
       <Input v-model="formItem.note" type="textarea" placeholder="备注" />
-      <Radio v-model="radio" style="margin:20px 0 0;">我已阅读并同意<span style="color:red">《礼服租赁协议》</span></Radio>
+      <Radio v-model="radio" style="margin:20px 0 0;">我已阅读并同意<span style="color:red" @click="textModal=true">《礼服租赁协议》</span></Radio>
       <div slot="footer">
         <Button type="primary" @click="validate">确认</Button>
         <Button type="text" @click="closeModal">取消</Button>
       </div>
+    </Modal>
+    <Modal v-model="textModal">
+      <div slot="header">礼服租赁协议</div>
+      <dress-text></dress-text>
+      <div slot="footer"></div>
     </Modal>
   </div>
 </template>
@@ -103,11 +105,13 @@
 import ItemHeader from '@/components/header'
 import ItemFooter from '@/components/footer'
 import Appraises from '@/Pages/Appraises'
+import DressText from './components/text'
 export default {
   components: {
     ItemHeader,
     ItemFooter,
-    Appraises
+    Appraises,
+    DressText
   },
   data () {
     return {
@@ -120,6 +124,7 @@ export default {
       time: null,
       Listtotal: 0,
       modal1: false,
+      textModal: false,
       radio: false,
       AppraisesList: [],
       type: false,
@@ -414,18 +419,6 @@ export default {
       }
       .rad{
         margin: 0 20px 0 0;
-      }
-      .add-order{
-        padding: 5px 0;
-        width: 178px;
-        height: 38px;
-        background-color: #ffeded;
-        border: 1px solid #FF0036;
-        color: #FF0036;
-        cursor: pointer;
-        &:focus{
-          outline: 0;
-        }
       }
       .add-car{
         background: #ff0036;

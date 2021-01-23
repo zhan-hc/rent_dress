@@ -132,6 +132,7 @@ export default {
             if (res.data.status === 200) {
               this.$Message.success(res.data.msg)
               this.type = 1
+              this.$refs['formValidate'].resetFields()
             } else {
               this.$Message.error(res.data.msg.rawMessage)
             }
