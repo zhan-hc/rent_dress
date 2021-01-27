@@ -1,7 +1,7 @@
 <template>
   <div class="Index">
     <index-header>
-      <router-link tag="p" to="/">礼服租赁</router-link>
+      <router-link tag="p" to="/product?name=">礼服租赁</router-link>
     </index-header>
     <router-view></router-view>
     <index-footer></index-footer>
