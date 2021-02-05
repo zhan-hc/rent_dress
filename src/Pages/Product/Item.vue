@@ -68,7 +68,7 @@
           <Input v-model="formItem.mobile" placeholder="请输入收件人电话" clearable style="width: 200px" />
         </FormItem>
         <FormItem label="租期" prop="dateTime">
-          <DatePicker type="daterange" v-model="formItem.dateTime" placeholder="Select date" style="width: 200px" @on-change="handlechange"></DatePicker>
+          <DatePicker type="daterange" :options="options3" v-model="formItem.dateTime" placeholder="Select date" style="width: 200px" @on-change="handlechange"></DatePicker>
         </FormItem>
       </Form>
       <div style="background:#f5f5f5;padding:10px; display:flex;margin:10px 0;">
@@ -119,6 +119,11 @@ export default {
       ItemList: {},
       Info: {},
       color: '',
+      options3: {
+        disabledDate (date) {
+          return date && date.valueOf() < Date.now() - 86400000
+        }
+      },
       num: 1,
       size: '',
       time: null,
