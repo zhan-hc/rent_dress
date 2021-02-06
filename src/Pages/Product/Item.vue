@@ -24,16 +24,12 @@
         <div class="info-size">
           尺码：
           <RadioGroup type="button" v-if="color" v-model="size" class="size">
-            <Radio :label="item.size" v-for="(item, i) in ItemList.product_color[color]" :key="i" class="rad"></Radio>
+            <Radio :label="item.size" v-for="(item, i) in ItemList.product_color[color]" :key="i" class="rad" style="margin-bottom:10px"></Radio>
           </RadioGroup>
         </div>
         <div class="info-num">
           数量：
-          <InputNumber :max="100" :min="1" v-model="num" style="width:40px"></InputNumber>
-          <div class="operate">
-            <Icon type="ios-arrow-up" class="icon" @click="operate(1)"/>
-            <Icon type="ios-arrow-down" class="icon"  @click="operate(2)"/>
-          </div>
+          <InputNumber :max="100" :min="1" v-model="num" style="width:60px"></InputNumber>
         </div>
         <div class="info-stock" v-if="Info[this.color]">
           库存：
@@ -302,10 +298,6 @@ export default {
         this.modal1 = true
       }
     },
-    operate (type) {
-      if (type === 1) this.num += 1
-      else this.num = this.num === 1 ? 1 : this.num - 1
-    },
     colorChange () {
       this.size = this.ItemList.product_color[this.color][0].size
     },
@@ -402,22 +394,6 @@ export default {
       .info-num{
         margin-bottom: 10px;
         padding-bottom: 10px;
-        .operate{
-          display: inline-block;
-          height: 40px;
-          width: 20px;
-          vertical-align: bottom;
-          .ivu-icon-ios-arrow-up{
-            margin:5px 0 5px;
-          }
-          .icon{
-            display: block;
-            border: 1px solid #ccc;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-          }
-        }
       }
       .info-stock{
         margin: 0 0 20px;

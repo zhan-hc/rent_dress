@@ -1,6 +1,6 @@
 <template>
   <div class="Index-content">
-    <category></category>
+    <swiper></swiper>
     <flow></flow>
     <img src="http://www.sunvary.com.cn/upload/2017/03/29/149079616210853a553.jpg" alt="">
     <rule></rule>
@@ -8,9 +8,9 @@
 </template>
 
 <script>
-import Category from '../components/Category'
 import Flow from '../components/Flow'
 import Rule from '../components/Rule'
+import Swiper from '../components/Swiper'
 export default {
   data () {
     return {
@@ -18,9 +18,9 @@ export default {
     }
   },
   components: {
-    Category,
     Flow,
-    Rule
+    Rule,
+    Swiper
   }
 }
 </script>
