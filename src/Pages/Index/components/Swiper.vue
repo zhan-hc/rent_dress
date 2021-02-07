@@ -6,8 +6,8 @@
           <router-link tag="img" :to="`Product/item/${item.pid}`" :src="item.product_img" alt="" />
         </swiper-slide>
       </swiper>
-      <div class="swiper-button-prev swiper-button-black" @click="prev"></div>
-      <div class="swiper-button-next swiper-button-black" @click="next"></div>
+      <div class="swiper-button-prev swiper-button-black"></div>
+      <div class="swiper-button-next swiper-button-black"></div>
     </div>
     <category v-else></category>
   </div>
@@ -15,6 +15,8 @@
 
 <script>
 import Category from './Category'
+import Swiper2, {Navigation, Autoplay} from 'swiper'
+Swiper2.use([Navigation, Autoplay])
 export default {
   components: {
     Category
@@ -58,12 +60,6 @@ export default {
     },
     handleClick () {
       window.location.href = 'Product/item/10001'
-    },
-    prev () {
-      this.$refs.mySwiper.$swiper.slidePrev()
-    },
-    next () {
-      this.$refs.mySwiper.$swiper.slideNext()
     }
   }
 }
