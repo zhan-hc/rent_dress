@@ -40,6 +40,7 @@
       </div>
     </div>
     <appraises v-if="type" :list="AppraisesList" :total="Listtotal" @getPage="changePage" @getRadio="changeRadio"></appraises>
+    <div v-else class="Appraises-desc">暂无评价</div>
     <item-footer></item-footer>
     <Modal v-model="modal1">
       <div slot="header">预约订单</div>
@@ -415,6 +416,12 @@ export default {
         }
       }
     }
+  }
+  .Appraises-desc{
+    letter-spacing: 2px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 28px;
   }
 
 }
