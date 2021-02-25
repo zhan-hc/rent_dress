@@ -19,7 +19,7 @@
           <div class="item-info">
             <div class="item-title">{{item.product_name}}</div>
             <div class="item-price">￥ {{item.product_price}} / 天</div>
-            <div class="item-color-size">{{item.product_color}} / {{item.product_size}}</div>
+            <div class="item-color-size">{{item.product_color}} / {{item.product_size}} / {{item.num}}</div>
             <div class="item-rent">租期：{{rent_time(item.startTime,item.endTime)}}天</div>
             <div class="item-start">租期区间：{{formatTime(item.startTime,1)}}----{{formatTime(item.endTime,1)}}</div>
             <div class="item-deposit">押金：{{item.product_deposit}}</div>
@@ -34,8 +34,9 @@
         <div v-if="item.deposit_status" class="item-deposit-desc">退还押金：￥{{item.deposit_refund}}（{{item.deposit_describe}}）</div>
         <div class="item-footer">
           <div class="item-total">总金额: ￥{{item.amount}}</div>
-          <button class="item-btn" v-if="item.status !== 4" @click="changeStatus(item.oid,item.status,item.pid)">{{checkStatus(item.status)}}</button>
-          <p class="item-finish"  v-if="item.status === 4">{{checkStatus(item.status)}}</p>
+          <button class="item-btn" v-if="item.status !== 4 && item.status !== 5" @click="changeStatus(item.oid,item.status,item.pid,item.product_name)">{{checkStatus(item.status)}}</button>
+          <p class="item-finish"  v-if="item.status === 4 || item.status === 5">{{checkStatus(item.status)}}</p>
+          <p class="item-cancel" @click=" cancelOrder(item.oid)"  v-if="item.status === 1">取消订单</p>
           <p class="item-parcel" v-if="item.status === 2"><a :href='`https://www.kuaidi100.com/chaxun?com=${item.kcode}&nu=${item.shipperCode}`'>查看物流</a></p>
         </div>
       </div>
@@ -90,6 +91,7 @@
 <script>
 import ItemHeader from '@/components/header'
 import ItemFooter from '@/components/footer'
+import {Aliaxios} from '../../utils/http'
 export default {
   components: {
     ItemHeader,
@@ -131,6 +133,10 @@ export default {
         {
           title: '已完成',
           status: 4
+        },
+        {
+          title: '已取消',
+          status: 5
         }
       ]
     }
@@ -197,13 +203,14 @@ export default {
       return this.moment(val).format('YYYY-MM-DD HH:mm:ss')
     },
     checkStatus (status) {
-      if (status === 0) return '等待买家付款'
+      if (status === 0) return '需付款'
       else if (status === 1) return '提醒发货'
       else if (status === 2) return '确认收货'
       else if (status === 3) return '立即评价'
-      else return '订单已完成'
+      else if (status === 4) return '订单已完成'
+      else return '已取消'
     },
-    changeStatus (oid, status, pid) {
+    changeStatus (oid, status, pid, pname) {
       if (status === 1) {
         this.$Message.success('已经提醒商家发货')
       } else if (status === 2) { // 确认收货
@@ -211,28 +218,84 @@ export default {
           title: '确认收货提示',
           content: '是否确认收货？',
           onOk: () => {
-            this.$axios({
-              method: 'post',
-              url: '/order/updateOrderStatus',
-              data: {
-                oid: oid,
-                status: 3
-              }
-            }).then((res) => {
-              if (res.data.status === 200) {
-                this.$Message.success(res.data.msg)
-                this.getOrderList()
-              } else {
-                this.$Message.error(res.data.msg.sqlMessage)
-              }
-            })
+            this.updateOrderStatus(oid, 3)
           }
         })
       } else if (status === 3) { // 评价
         this.modal1 = true
         this.oid = oid
         this.pid = pid
+      } else if (status === 0) { // 付款
+        this.AliPay(oid, pname)
       }
+    },
+    updateOrderStatus (oid, status) { // 修改订单状态
+      this.$axios({
+        method: 'post',
+        url: '/order/updateOrderStatus',
+        data: {
+          oid: oid,
+          status: status
+        }
+      }).then((res) => {
+        if (res.data.status === 200) {
+          this.$Message.success('退款成功')
+          this.getOrderList()
+        } else {
+          this.$Message.error(res.data.msg.sqlMessage)
+        }
+      })
+    },
+    AliPay (oid, pname) { // 支付宝付款
+      this.$axios({
+        method: 'POST',
+        url: '/order/AliPay',
+        data: {
+          oid: oid,
+          pname: pname
+        }
+      }).then((res) => {
+        if (res.data.status === 200) {
+          window.location.href = res.data.url
+        } else {
+          this.$Message.error(res.data.msg.rawMessage)
+        }
+      })
+    },
+    cancelOrder (oid) { // 取消订单
+      this.$Modal.confirm({
+        title: '取消订单',
+        content: '确认取消订单吗？',
+        onOk: () => {
+          this.$axios({
+            method: 'post',
+            url: '/order/refundDeposit',
+            data: {
+              oid: oid,
+              amount: 0.05
+            }
+          }).then((res) => {
+            if (res.data.status === 200) {
+              this.refundUrl(res.data.url, oid)
+            } else {
+              this.$Message.error('退款订单接口错误')
+            }
+          })
+        }
+      })
+    },
+    // 支付宝退款url
+    refundUrl (url, oid) {
+      Aliaxios({
+        method: 'get',
+        url: `${url}`
+      }).then((res) => {
+        if (res.status === 200 && res.data.alipay_trade_refund_response.code === '10000') {
+          this.updateOrderStatus(oid, 5)
+        } else {
+          this.$Message.error(res.data.alipay_trade_refund_response.sub_msg)
+        }
+      })
     },
     handleRemove (file) {
       const fileList = this.$refs.upload.fileList
@@ -365,9 +428,10 @@ export default {
           font-weight: bold;
           line-height: 33px;
         }
-        .item-btn{
+        .item-btn,.item-cancel{
           margin-right: 30px;
           border-style: none;
+          text-align: center;
           width: 150px;
           color: red;
           letter-spacing: 2px;

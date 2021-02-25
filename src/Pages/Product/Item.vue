@@ -231,12 +231,29 @@ export default {
         addressee: this.formItem.addressee,
         mobile: this.formItem.mobile,
         product_sales: this.ItemList.product_sales + this.num,
+        num: this.num,
         amount: this.total
       }
       this.$axios({
         method: 'POST',
         url: '/order/addOrder',
         data: formData
+      }).then((res) => {
+        if (res.data.status === 200) {
+          this.AliPay(res.data.oid, formData.pname)
+        } else {
+          this.$Message.error(res.data.msg.rawMessage)
+        }
+      })
+    },
+    AliPay (oid, pname) {
+      this.$axios({
+        method: 'POST',
+        url: '/order/AliPay',
+        data: {
+          oid: oid,
+          pname: pname
+        }
       }).then((res) => {
         if (res.data.status === 200) {
           window.location.href = res.data.url

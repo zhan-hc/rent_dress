@@ -17,7 +17,6 @@
       <router-link tag="li" to="/homepage"><Icon type="md-home" />主页</router-link>
     </ul>
     <div class="content-main">
-      <!-- <router-link tag="p" to="/">礼服租赁</router-link> -->
       <slot></slot>
       <ul class="tab">
         <li v-for="item in category" :key="item.id" @click="sendCategory(item.id)">{{item.product_category}}</li>
