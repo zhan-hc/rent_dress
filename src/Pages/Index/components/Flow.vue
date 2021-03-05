@@ -25,20 +25,20 @@ export default {
           style: 'yellow'
         },
         {
-          title: '到店选款',
+          title: '往店选款',
           text1: '确认款式，核实信息',
-          text2: '签署合同，缴纳定金',
+          text2: '同意协议，线上缴纳费用',
           style: 'green'
         },
         {
-          title: ' 取衣',
-          text1: '出示有效证件',
-          text2: '并缴纳押金',
+          title: ' 快递发货',
+          text1: '收货检查',
+          text2: '完成发还',
           style: 'pink'
         },
         {
           title: '使用',
-          text1: '三天起租',
+          text1: '一天起租',
           text2: '保存凭证',
           style: 'deepyellow'
         },

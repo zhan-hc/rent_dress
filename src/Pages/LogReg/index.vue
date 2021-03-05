@@ -2,7 +2,7 @@
 <div class="login">
     <ul class="login-header">
         <li><i class="iconfont icon-user"></i>登录/注册</li>
-        <li><i class="iconfont icon-shoppingcarthover"></i>购物车</li>
+        <router-link tag="li" to="/homepage"><Icon type="md-home" />主页</router-link>
       </ul>
       <div class="login-title">
         <router-link tag="p" to="/">礼服租赁</router-link>
@@ -183,9 +183,7 @@ export default {
   left: 0;
   right: 0;
   bottom: 0;
-  // background: rgba(28,28,28,0.7);
   background: #f5f5f5;
-  // color: #fff;
   &-header{
     list-style: none;
     font-weight: bold;
@@ -200,6 +198,7 @@ export default {
     li{
       float: right;
       margin-right: 50px;
+      cursor: pointer;
       i{
         margin-right: 10px;
       }

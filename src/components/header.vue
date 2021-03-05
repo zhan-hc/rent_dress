@@ -28,19 +28,26 @@
     </div>
     <Modal v-model="chatModal" @on-cancel='closeModal'>
       <div slot="header">客服聊天</div>
-      <!-- <p>{{list}}</p> -->
-      <div class="chat-text" style="height:300px;overflow:scroll;">
-        <div  v-for="(item, i) in list" :key='i' >
-          <div v-show="item.type === userName" style="margin:20px 0;">
-          我：<span style="background:#7FFFAA;padding:5px 10px;border-radius:5px;">{{item.content}}</span>
-        </div>
-        <div v-show="item.type === 'robot'" style="margin:20px 10px 20px 0;text-align:right;">
-          客服：<span style="background:#E6E6FA;padding:5px 10px;border-radius:5px;">{{item.content}}</span>
-        </div>
+      <div class="chat-text" ref='chatText' style="height:300px;overflow:scroll;letter-spacing:1px;margin-bottom:10px;">
+        <div  v-for="(item, i) in list" :key='i'>
+          <div class="chatText-mine" v-show="item.type === userName"
+            style="margin:0 0 10px;padding:5px 10px;display:flex;">
+            <div  style="padding:5px 0;white-space:nowrap;">我：</div>
+            <div style="background:#7FFFAA;padding:5px 10px;border-radius:5px;word-wrap:break-word;word-break:normal;">{{item.content}}</div>
+            <div style="flex: 0 0 230px;"></div>
+          </div>
+          <div v-show="item.type === 'robot'"
+            style="margin:0 10px 10px;display:flex;flex-direction:row-reverse;">
+            <div style="padding:5px 0;white-space:nowrap;">：客服</div>
+            <div style="background:#E6E6FA;padding:5px 10px;border-radius:5px;word-wrap:break-word;word-break:normal;">{{item.content}}</div>
+            <div style="flex: 0 0 220px;"></div>
+          </div>
         </div>
       </div>
-      <Input type="text"  v-model='content.text'/>
-      <button @click="sendText">发送</button>
+      <div class="chat-send" style="display:flex;">
+        <Input  v-model='content.text' type="textarea" :autosize="{minRows: 2,maxRows: 5}" style="width:400px;flex:1;"/>
+        <Button type="primary" @click="sendText" style="margin: 10px 20px;">发送</Button>
+      </div>
       <div slot="footer"></div>
     </Modal>
   </div>
@@ -74,6 +81,14 @@ export default {
       this.getCategoryList()
     }
   },
+  watch: {
+    list () {
+      let that = this
+      setTimeout(() => {
+        that.$refs.chatText.scrollTop = that.$refs.chatText.scrollHeight
+      }, 0)
+    }
+  },
   computed: {
     userName () {
       return this.$store.state.rent_user
@@ -103,6 +118,7 @@ export default {
     logout () {
       this.$store.commit('$_removeUser') // 清除登录信息
       this.$store.commit('$_removeUserId')
+      localStorage.setItem('UserChatLog', '{}')
       this.$Message.success('退出登陆成功')
       this.$router.push('/')
     },
@@ -139,7 +155,7 @@ export default {
     },
     openWs () {
       let that = this
-      that.ws = new WebSocket('ws://192.168.43.97:8022')
+      that.ws = new WebSocket('ws://172.16.155.125:8022')
       if (window.WebSocket) {
         that.ws.onopen = function (e) {
           console.log('链接服务器成功')
@@ -153,12 +169,16 @@ export default {
           console.log('服务器出错')
         }
         that.ws.onmessage = function (e) {
+          console.log(e.data)
           const data = JSON.parse(e.data)
-          for (let i = 0; i < data.text.length; i++) {
-            if (data.text[i]) {
-              that.list.push({type: 'robot', content: data.text[i]})
+          if (data.text) {
+            for (let i = 0; i < data.text.length; i++) {
+              if (data.text[i]) {
+                that.list.push({type: 'robot', content: data.text[i]})
+              }
             }
           }
+          that.closeModal()
         }
       }
     },
@@ -178,6 +198,7 @@ export default {
       }
     },
     closeModal () {
+      console.log('当前聊天记录：', this.list)
       localStorage.setItem('UserChatLog', JSON.stringify(this.list))
     }
   }

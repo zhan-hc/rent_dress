@@ -34,7 +34,7 @@
         <div v-if="item.deposit_status" class="item-deposit-desc">退还押金：￥{{item.deposit_refund}}（{{item.deposit_describe}}）</div>
         <div class="item-footer">
           <div class="item-total">总金额: ￥{{item.amount}}</div>
-          <button class="item-btn" v-if="item.status !== 4 && item.status !== 5" @click="changeStatus(item.oid,item.status,item.pid,item.product_name)">{{checkStatus(item.status)}}</button>
+          <button class="item-btn" v-if="item.status !== 4 && item.status !== 5" @click="changeStatus(item.oid,item.status,item.pid,item.product_name,item.amount)">{{checkStatus(item.status)}}</button>
           <p class="item-finish"  v-if="item.status === 4 || item.status === 5">{{checkStatus(item.status)}}</p>
           <p class="item-cancel" @click=" cancelOrder(item.oid)"  v-if="item.status === 1">取消订单</p>
           <p class="item-parcel" v-if="item.status === 2"><a :href='`https://www.kuaidi100.com/chaxun?com=${item.kcode}&nu=${item.shipperCode}`'>查看物流</a></p>
@@ -210,7 +210,7 @@ export default {
       else if (status === 4) return '订单已完成'
       else return '已取消'
     },
-    changeStatus (oid, status, pid, pname) {
+    changeStatus (oid, status, pid, pname, amount) {
       if (status === 1) {
         this.$Message.success('已经提醒商家发货')
       } else if (status === 2) { // 确认收货
@@ -226,7 +226,7 @@ export default {
         this.oid = oid
         this.pid = pid
       } else if (status === 0) { // 付款
-        this.AliPay(oid, pname)
+        this.AliPay(oid, pname, amount)
       }
     },
     updateOrderStatus (oid, status) { // 修改订单状态
@@ -246,13 +246,14 @@ export default {
         }
       })
     },
-    AliPay (oid, pname) { // 支付宝付款
+    AliPay (oid, pname, amount) { // 支付宝付款
       this.$axios({
         method: 'POST',
         url: '/order/AliPay',
         data: {
           oid: oid,
-          pname: pname
+          pname: pname,
+          amount: amount
         }
       }).then((res) => {
         if (res.data.status === 200) {

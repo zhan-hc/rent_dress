@@ -322,6 +322,7 @@ export default {
     closeModal () {
       this.modal1 = false
       this.$refs['formValidate'].resetFields()
+      this.radio = false
     },
     handlechange (data) {
       this.time = this.moment(data[1]).diff(this.moment(data[0]), 'days') + 1
