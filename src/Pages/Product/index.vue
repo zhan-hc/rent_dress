@@ -1,5 +1,10 @@
 <template>
   <div class="product">
+    <Select v-model="category" style="width:200px;margin-bottom:20px"  placeholder='排序' @on-change='getProduct'>
+      <Option :value="0">默认</Option>
+      <Option :value="1">销量</Option>
+      <Option :value="2">好评度</Option>
+    </Select>
     <div class="product-list">
       <div class="item" v-for="item in productList" :key="item.pid" @click.stop="getItem(item.pid)">
         <div class="item-img"><img class="item-img" :src="item.product_img" alt=""></div>
@@ -20,6 +25,7 @@ export default {
       total: 0,
       pageNo: 1,
       pageSize: 10,
+      category: 0,
       cid: null // category_id
     }
   },
@@ -42,10 +48,12 @@ export default {
           pageNo: this.pageNo,
           pageSize: this.pageSize,
           name: this.searchName || null,
-          cid: this.cid || null
+          cid: this.cid || null,
+          category: this.category
         }
       }).then((res) => {
         if (res.data.status === 200) {
+          console.log(res)
           this.productList = res.data.data
           this.total = res.data.total
         }
@@ -58,6 +66,10 @@ export default {
       this.pageNo = currentPage
       this.getProduct()
     }
+    // changeCategory () {
+    //   console.log(status)
+    //   console.log(this.category)
+    // }
   },
   components: {
   }
@@ -67,7 +79,7 @@ export default {
 <style scoped lang="scss">
 .product{
   width: 1200px;
-  margin: 50px auto;
+  margin: 20px auto;
   &-list{
     min-height: 142px;
     .item{

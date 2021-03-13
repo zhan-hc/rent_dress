@@ -22,7 +22,7 @@
               <div class="item-img" v-for="(gitem, i) in imgSplit(item.imgUrl)" :key="i">
                 <img :src="gitem" alt="">
               </div>
-              <div class="item-time">{{moment(item.creteTime).format('YYYY-MM-DD')}}</div>
+              <div class="item-time">{{moment(item.createTime).format('YYYY-MM-DD')}}</div>
             </div>
           </td>
           <td>

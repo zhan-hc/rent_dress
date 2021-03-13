@@ -96,7 +96,7 @@ export default {
       if (value === '') {
         callback(new Error('确认密码不能为空'))
       } else if (this.RegItem.password !== value) {
-        callback(new Error('新密码和确认密码应相同'))
+        callback(new Error('密码和确认密码应相同'))
       } else {
         callback()
       }
@@ -142,6 +142,10 @@ export default {
     },
     handleSubmit () {
       if (this.type === 1) {
+        if (this.LoginItem.mobile === '' || this.LoginItem.password === '') {
+          this.$Message.error('手机号或密码不能为空')
+          return false
+        }
         this.$axios({
           method: 'POST',
           url: '/user/checkUser',

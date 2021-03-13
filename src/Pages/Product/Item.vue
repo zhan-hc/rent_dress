@@ -13,7 +13,7 @@
         </div>
         <ul class="info-appraise">
           <li>月销量：<span>{{ItemList.product_sales}}</span></li>
-          <li>累计评价：<span>{{AppraisesList.length}}</span></li>
+          <li>累计评价：<span>{{Listtotal}}</span></li>
         </ul>
         <div class="info-color">
           颜色：
@@ -29,7 +29,7 @@
         </div>
         <div class="info-num">
           数量：
-          <InputNumber :max="100" :min="1" v-model="num" style="width:60px"></InputNumber>
+          <InputNumber :max="ItemStock['stock']" :min="1"  v-model="num" style="width:60px"></InputNumber>
         </div>
         <div class="info-stock" v-if="Info[this.color]">
           库存：
@@ -81,7 +81,7 @@
       </div>
       <p>日租金：￥{{ItemList.product_price}}</p>
       <p>租期：{{time}}天</p>
-      <p style="color:red;font-size:18px;border-bottom:1px solid #ccc;padding:0 0 10px;">总租金：￥{{ItemList.product_price*time}}</p>
+      <p style="color:red;font-size:18px;border-bottom:1px solid #ccc;padding:0 0 10px;">总租金：￥{{ItemList.product_price*time*num}}</p>
       <p style="margin:10px 0;">总费用(押金+租金)：￥{{total}}</p>
       <Input v-model="formItem.note" type="textarea" placeholder="备注" />
       <Radio v-model="radio" style="margin:20px 0 0;">我已阅读并同意<span style="color:red" @click="textModal=true">《礼服租赁协议》</span></Radio>
