@@ -26,11 +26,6 @@ export default {
           id: 1003,
           imgUrl: require('@/assets/image/content_3.jpg'),
           text: '婚宴会礼服'
-        },
-        {
-          id: 1004,
-          imgUrl: require('@/assets/image/content_4.jpg'),
-          text: '商务西装'
         }
       ]
     }
