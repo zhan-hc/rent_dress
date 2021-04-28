@@ -26,6 +26,7 @@ export default {
           id: 1003,
           imgUrl: require('@/assets/image/content_3.jpg'),
           text: '婚宴会礼服'
+<<<<<<< HEAD
         },
         {
           id: 1004,
@@ -36,6 +37,8 @@ export default {
           id: 1005,
           imgUrl: require('@/assets/image/content_4.jpg'),
           text: '商务西装'
+=======
+>>>>>>> zhanhuanchao
         }
       ]
     }
