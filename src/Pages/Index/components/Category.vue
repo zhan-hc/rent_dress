@@ -31,6 +31,11 @@ export default {
           id: 1004,
           imgUrl: require('@/assets/image/content_4.jpg'),
           text: '商务西装'
+        },
+        {
+          id: 1005,
+          imgUrl: require('@/assets/image/content_4.jpg'),
+          text: '商务西装'
         }
       ]
     }
